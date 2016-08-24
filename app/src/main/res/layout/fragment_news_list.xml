@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="com.ihandy.a2014011367.wtfnews.models.News" />
+        <import type="me.tatarka.bindingcollectionadapter.LayoutManagers" />
+        <variable name="categoryViewModel" type="com.ihandy.a2014011367.wtfnews.models.CategoryViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@{categoryViewModel.name}"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            tools:context="com.ihandy.a2014011367.wtfnews.CategoryActivity">
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="@{LayoutManagers.linear()}"
+                app:items="@{categoryViewModel.items}"
+                app:itemView="@{categoryViewModel.itemView}"/>
+        </RelativeLayout>
+    </RelativeLayout>
+</layout>
