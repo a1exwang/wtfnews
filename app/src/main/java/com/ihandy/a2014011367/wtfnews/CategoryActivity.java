@@ -1,44 +1,75 @@
 package com.ihandy.a2014011367.wtfnews;
 
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.GravityCompat;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.ihandy.a2014011367.wtfnews.models.Category;
+import com.ihandy.a2014011367.wtfnews.models.ModelCallback;
+import com.ihandy.a2014011367.wtfnews.models.News;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import rx.Observable;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func0;
+import rx.functions.Func1;
+import rx.observables.AsyncOnSubscribe;
+import rx.schedulers.Schedulers;
 
 public class CategoryActivity extends AppCompatActivity {
 
+    ArrayList<Category> categoryArrayList = new ArrayList<>();
+
     class CategoryViewPagerAdapter extends FragmentPagerAdapter {
-        public CategoryViewPagerAdapter(FragmentManager fm) {
+        public CategoryViewPagerAdapter(FragmentManager fm, Observable<Category> observable) {
             super(fm);
+            observable.subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<Category>() {
+                        @Override
+                        public void onCompleted() {
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                        }
+
+                        @Override
+                        public void onNext(Category c) {
+                            categoryArrayList.add(c);
+                            notifyDataSetChanged();
+                        }
+                    });
         }
 
         @Override
         public int getCount() {
-           return Category.getAll().length;
+            return categoryArrayList.size();
         }
 
         @Override
         public Fragment getItem(int position) {
-            Category category = Category.getAll()[position];
+            Category category = categoryArrayList.get(position);
             return new CategoryFragment(category);
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return Category.getAll()[position].getName();
+            return categoryArrayList.get(position).getName();
         }
 
     }
@@ -46,25 +77,41 @@ public class CategoryActivity extends AppCompatActivity {
     ViewPager mViewPager;
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
+    CategoryViewPagerAdapter mPagerAdapter;
+    Observable<Category> mObservable;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
 
+        Observable.defer(new Func0<Observable<? extends Object>>() {
+            @Override
+            public Observable<? extends Object> call() {
+
+                return null;
+            }
+        });
+
         mViewPager = (ViewPager) findViewById(R.id.viewPagerCategory);
-        mViewPager.setAdapter(new CategoryViewPagerAdapter(getSupportFragmentManager()));
+        mPagerAdapter = new CategoryViewPagerAdapter(getSupportFragmentManager(), mObservable);
+        mViewPager.setAdapter(mPagerAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayoutCategory);
         tabLayout.setupWithViewPager(mViewPager);
 
-
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
+        // getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawLayout);
         mNavigationView = (NavigationView) findViewById(R.id.navigationView);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
     }
 
     @Override
@@ -89,4 +136,20 @@ public class CategoryActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    public static final int MSG_UPDATE_TABS = 0x100;
+
+    class CategoryHandler extends Handler {
+        @Override
+        public void handleMessage(Message m) {
+            switch (m.what) {
+                case MSG_UPDATE_TABS:
+                    mViewPager.setAdapter(mPagerAdapter);
+                    break;
+            }
+
+        }
+
+    }
+    CategoryHandler mHandler = new CategoryHandler();
 }

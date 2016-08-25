@@ -1,9 +1,14 @@
 package com.ihandy.a2014011367.wtfnews.models;
 
+import android.hardware.ConsumerIrManager;
+import android.os.Message;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 
-public class Category {
+public class Category extends BaseModel {
     private String name;
     private ArrayList<News> news = new ArrayList<>();
     public static Category[] getAll() {
@@ -23,8 +28,24 @@ public class Category {
         return categories.toArray(new Category[categories.size()]);
     }
 
+    public static void getAllAsync(final ModelCallback<Category[]> cb) {
+        // startService, and give it a callback
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                cb.callback(getAll());
+            }
+        }.start();
+    }
+
     public String getName() {
         return this.name;
     }
     public News[] getNews() { return news.toArray(new News[news.size()]); }
+
 }

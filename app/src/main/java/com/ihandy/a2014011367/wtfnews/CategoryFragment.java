@@ -12,6 +12,9 @@ import com.ihandy.a2014011367.wtfnews.databinding.FragmentNewsListBinding;
 import com.ihandy.a2014011367.wtfnews.models.Category;
 import com.ihandy.a2014011367.wtfnews.models.CategoryViewModel;
 
+import rx.Observable;
+import rx.Subscription;
+
 public class CategoryFragment extends Fragment {
     private Category category;
     public CategoryFragment() {
@@ -35,5 +38,14 @@ public class CategoryFragment extends Fragment {
         View view = binding.getRoot();
         binding.setCategoryViewModel(new CategoryViewModel(category));
         return view;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstances) {
+        super.onCreate(savedInstances);
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 }
