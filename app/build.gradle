@@ -34,12 +34,18 @@ dependencies {
     compile 'com.android.support:cardview-v7:24.2.0'
     compile 'com.android.support:support-v4:24.2.0'
     compile 'com.android.support:design:24.2.0'
-
+    compile 'com.mcxiaoke.volley:library:1.0.19'
+    // Async events library
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'io.reactivex:rxjava:1.1.6'
 
+    // Restful API library
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
 
+    // ORM library
+    compile 'com.github.satyan:sugar:1.5'
+
+    // Event binding library
     compile 'com.jakewharton:butterknife:8.3.0'
     apt 'com.jakewharton:butterknife-compiler:8.3.0'
 }

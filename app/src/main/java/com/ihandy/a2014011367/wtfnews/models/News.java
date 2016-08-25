@@ -29,4 +29,7 @@ public class News {
             return null;
         }
     }
+    public long getId() {
+        return news_id;
+    }
 }
