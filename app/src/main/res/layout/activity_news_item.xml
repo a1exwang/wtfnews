@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable name="news" type="com.ihandy.a2014011367.wtfnews.models.News"/>
+        <variable name="categories" type="com.ihandy.a2014011367.wtfnews.models.Category" />
+        <variable name="categoryViewModel" type="com.ihandy.a2014011367.wtfnews.viewmodels.CategoryViewModel" />
+        <import type="me.tatarka.bindingcollectionadapter.LayoutManagers" />
+    </data>
+
+    <android.support.v4.widget.DrawerLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/textViewUrl"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="@{news.getTitle()}"/>
+            <ProgressBar
+                android:id="@+id/webViewProgressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="2dip"
+                android:layout_below="@id/textViewUrl"/>
+            <WebView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/webViewNewsItem"
+                android:layout_below="@+id/webViewProgressBar" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:choiceMode="singleChoice"
+            android:divider="@android:color/transparent"
+            android:background="#ccc"
+            android:dividerHeight="0dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+    </android.support.v4.widget.DrawerLayout>
+</layout>

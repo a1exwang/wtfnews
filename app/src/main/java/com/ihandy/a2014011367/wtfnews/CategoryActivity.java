@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.ihandy.a2014011367.wtfnews.api.MyVolley;
 import com.ihandy.a2014011367.wtfnews.models.Category;
 
 import java.util.ArrayList;

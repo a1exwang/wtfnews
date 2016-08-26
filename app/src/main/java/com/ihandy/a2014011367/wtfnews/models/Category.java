@@ -2,12 +2,6 @@ package com.ihandy.a2014011367.wtfnews.models;
 
 import android.util.Log;
 
-import com.android.volley.Request;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.RequestFuture;
-import com.google.gson.Gson;
-import com.ihandy.a2014011367.wtfnews.MyVolley;
-import com.ihandy.a2014011367.wtfnews.Callback;
 import com.ihandy.a2014011367.wtfnews.api.NewsApi;
 import com.ihandy.a2014011367.wtfnews.records.CategoryRecord;
 import com.ihandy.a2014011367.wtfnews.records.NewsRecord;

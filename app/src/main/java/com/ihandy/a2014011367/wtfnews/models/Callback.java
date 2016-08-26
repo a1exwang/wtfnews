@@ -1,4 +1,4 @@
-package com.ihandy.a2014011367.wtfnews;
+package com.ihandy.a2014011367.wtfnews.models;
 
 /**
  * Created by alexwang on 8/26/16.

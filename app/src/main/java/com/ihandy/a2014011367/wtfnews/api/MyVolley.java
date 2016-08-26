@@ -1,4 +1,4 @@
-package com.ihandy.a2014011367.wtfnews;
+package com.ihandy.a2014011367.wtfnews.api;
 
 import android.content.Context;
 

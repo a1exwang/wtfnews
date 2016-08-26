@@ -10,6 +10,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class News implements Parcelable, Serializable {
     public static News fromJSONObject(JSONObject jsonObject) throws JSONException {
@@ -25,6 +28,7 @@ public class News implements Parcelable, Serializable {
         JSONObject source = jsonObject.getJSONObject("source");
         news.url = source.getString("url");
         news.sourceName = source.getString("name");
+        news.updatedTime = jsonObject.getLong("updated_time");
 
         return news;
     }
@@ -57,11 +61,12 @@ public class News implements Parcelable, Serializable {
         this.imgUrl = nr.getImgUrl();
         this.sourceName = nr.getSourceName();
         this.url = nr.getUrl();
+        this.updatedTime = nr.getUpdatedTime();
     }
 
     /* These are JSON fields */
     private String category, country, locale_category, origin, title = "title";
-    private long fetched_time, newsId, updated_time;
+    private long fetched_time, newsId, updatedTime;
     private String sourceName, url, imgUrl;
 
     public String getTitle() { return title; }
@@ -79,8 +84,13 @@ public class News implements Parcelable, Serializable {
     public long getId() {
         return newsId;
     }
+    public long getUpdatedTime() { return updatedTime; }
+    public String getPrettyUpdatedTime() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        return sdf.format(new Date(getUpdatedTime()));
+    }
 
     public NewsRecord toNewsRecord() {
-        return new NewsRecord(newsId, title, sourceName, url, imgUrl);
+        return new NewsRecord(newsId, title, sourceName, url, imgUrl, updatedTime);
     }
 }

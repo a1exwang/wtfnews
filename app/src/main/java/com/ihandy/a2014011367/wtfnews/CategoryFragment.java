@@ -13,6 +13,8 @@ import com.ihandy.a2014011367.wtfnews.databinding.FragmentNewsListBinding;
 import com.ihandy.a2014011367.wtfnews.models.Category;
 import com.ihandy.a2014011367.wtfnews.viewmodels.CategoryViewModel;
 
+import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
+
 public class CategoryFragment extends Fragment {
     private Category category;
     public CategoryFragment() {
@@ -41,6 +43,7 @@ public class CategoryFragment extends Fragment {
             CategoryViewModel vm = new CategoryViewModel(category);
             binding.setCategoryViewModel(vm);
             recyclerView.addOnScrollListener(vm.getScrollListener());
+            recyclerView.setItemAnimator(new SlideInLeftAnimator());
         }
         return view;
     }
