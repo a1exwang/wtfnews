@@ -3,4 +3,6 @@
     <string name="newsCategory">NewsCategories</string>
     <string name="drawer_open">Good</string>
     <string name="drawer_close">Bad</string>
+
+    <string name="newsActivityDataKeyNewsUrl">newsActivityDataKeyNewsUrl</string>
 </resources>

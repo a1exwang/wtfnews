@@ -8,6 +8,7 @@ import com.android.volley.toolbox.RequestFuture;
 import com.google.gson.Gson;
 import com.ihandy.a2014011367.wtfnews.MyVolley;
 import com.ihandy.a2014011367.wtfnews.Callback;
+import com.ihandy.a2014011367.wtfnews.api.NewsApi;
 import com.ihandy.a2014011367.wtfnews.records.CategoryRecord;
 import com.ihandy.a2014011367.wtfnews.records.NewsRecord;
 import com.orm.SugarRecord;
@@ -45,11 +46,7 @@ public class Category extends BaseModel {
         }
 
         // New categories
-        RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        String url = "http://assignment.crazz.cn/news/en/category?timestamp=" + System.currentTimeMillis();
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, future, future);
-        MyVolley.getRequestQueue().add(req);
-        JSONObject json = future.get();
+        JSONObject json = NewsApi.getCategories();
 
         try {
             JSONObject data = json.getJSONObject("data");
@@ -110,22 +107,18 @@ public class Category extends BaseModel {
             return newsList.get(index);
         }
 
+
         // finally, query from JSON API
-        Gson gson = new Gson();
-        String newsIdParam = "";
-        if (newsList.size() != 0) {
-            long maxId = newsList.get(newsList.size()-1).getId();
-            newsIdParam = "&max_news_id=" + maxId;
+        JSONArray jsonNews;
+        if (newsList.size() == 0) {
+            jsonNews = NewsApi.getNews(this.key);
         }
-        RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        String url = "http://assignment.crazz.cn/news/query?locale=en&category=" + this.key + newsIdParam;
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, future, future);
-        MyVolley.getRequestQueue().add(req);
-        JSONObject json = future.get();
-        JSONArray jsonNews = json.getJSONObject("data").getJSONArray("news");
+        else {
+            jsonNews = NewsApi.getNews(this.key, newsList.get(newsList.size() - 1).getId());
+        }
         for (int i = 0; i < jsonNews.length(); ++i) {
             JSONObject jsonNewsObject = (JSONObject) jsonNews.get(i);
-            News news = gson.fromJson(jsonNewsObject.toString(), News.class);
+            News news = News.fromJSONObject(jsonNewsObject);
 
             // add to database and memory cache if new news does not exists
             if (news.toNewsRecord().saveIfNotFound()) {

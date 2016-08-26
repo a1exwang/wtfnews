@@ -5,7 +5,7 @@
     <data>
         <import type="com.ihandy.a2014011367.wtfnews.models.News" />
         <import type="me.tatarka.bindingcollectionadapter.LayoutManagers" />
-        <variable name="categoryViewModel" type="com.ihandy.a2014011367.wtfnews.models.CategoryViewModel" />
+        <variable name="categoryViewModel" type="com.ihandy.a2014011367.wtfnews.viewmodels.CategoryViewModel" />
     </data>
 
     <RelativeLayout
@@ -32,9 +32,7 @@
                 android:fadeScrollbars="true"
                 app:layoutManager="@{LayoutManagers.linear()}"
                 app:items="@{categoryViewModel.items}"
-                app:itemView="@{categoryViewModel.itemView}"
-
-                />
+                app:itemView="@{categoryViewModel.itemView}" />
         </RelativeLayout>
     </RelativeLayout>
 </layout>

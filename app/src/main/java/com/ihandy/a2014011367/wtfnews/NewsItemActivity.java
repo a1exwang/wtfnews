@@ -1,31 +1,36 @@
 package com.ihandy.a2014011367.wtfnews;
 
+import android.annotation.SuppressLint;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.ihandy.a2014011367.wtfnews.databinding.ActivityMainBinding;
-import com.ihandy.a2014011367.wtfnews.models.Category;
+import com.ihandy.a2014011367.wtfnews.databinding.ActivityNewsItemBinding;
 import com.ihandy.a2014011367.wtfnews.models.News;
-import com.ihandy.a2014011367.wtfnews.models.CategoryViewModel;
-import com.ihandy.a2014011367.wtfnews.records.CategoryRecord;
 
 public class NewsItemActivity extends AppCompatActivity {
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        News news = getIntent().getExtras().getParcelable(getString(R.string.newsActivityDataKeyNewsUrl));
 
-
-        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        News news = new News();
+        ActivityNewsItemBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_news_item);
         binding.setNews(news);
 
-        WebView webView = (WebView) findViewById(R.id.webViewNewsItem);
-        webView.setWebViewClient(new WebViewClient());
-        webView.loadUrl("https://www.baidu.com");
+        if (news != null) {
+            WebView webView = (WebView) findViewById(R.id.webViewNewsItem);
+            webView.setWebViewClient(new WebViewClient());
+            WebSettings webSettings = webView.getSettings();
+            webSettings.setJavaScriptEnabled(true);
+
+
+            webView.loadUrl(news.getUrl());
+        }
     }
 
 
