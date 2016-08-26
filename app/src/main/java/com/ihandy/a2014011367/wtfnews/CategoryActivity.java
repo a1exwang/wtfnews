@@ -7,7 +7,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -17,17 +16,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.ihandy.a2014011367.wtfnews.models.Category;
-import com.ihandy.a2014011367.wtfnews.models.ModelCallback;
-import com.ihandy.a2014011367.wtfnews.models.News;
 
 import java.util.ArrayList;
-import java.util.Collections;
+
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func0;
-import rx.functions.Func1;
-import rx.observables.AsyncOnSubscribe;
 import rx.schedulers.Schedulers;
 
 public class CategoryActivity extends AppCompatActivity {
@@ -46,6 +40,7 @@ public class CategoryActivity extends AppCompatActivity {
 
                         @Override
                         public void onError(Throwable e) {
+                            e.printStackTrace();
                         }
 
                         @Override
@@ -84,13 +79,9 @@ public class CategoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
 
-        Observable.defer(new Func0<Observable<? extends Object>>() {
-            @Override
-            public Observable<? extends Object> call() {
+        MyVolley.init(this);
 
-                return null;
-            }
-        });
+        mObservable = Category.getAllObservable();
 
         mViewPager = (ViewPager) findViewById(R.id.viewPagerCategory);
         mPagerAdapter = new CategoryViewPagerAdapter(getSupportFragmentManager(), mObservable);
@@ -111,7 +102,6 @@ public class CategoryActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
     }
 
     @Override

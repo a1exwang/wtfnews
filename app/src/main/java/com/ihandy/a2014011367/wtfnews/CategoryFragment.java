@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +14,6 @@ import android.view.ViewGroup;
 import com.ihandy.a2014011367.wtfnews.databinding.FragmentNewsListBinding;
 import com.ihandy.a2014011367.wtfnews.models.Category;
 import com.ihandy.a2014011367.wtfnews.models.CategoryViewModel;
-
-import rx.Observable;
-import rx.Subscription;
 
 public class CategoryFragment extends Fragment {
     private Category category;
@@ -36,7 +36,14 @@ public class CategoryFragment extends Fragment {
 
         FragmentNewsListBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_news_list, container, false);
         View view = binding.getRoot();
-        binding.setCategoryViewModel(new CategoryViewModel(category));
+
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+
+        if (category != null) {
+            CategoryViewModel vm = new CategoryViewModel(category);
+            binding.setCategoryViewModel(vm);
+            recyclerView.addOnScrollListener(vm.getScrollListener());
+        }
         return view;
     }
 
