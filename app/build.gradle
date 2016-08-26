@@ -41,9 +41,14 @@ dependencies {
 
     // Restful API library
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
 
     // ORM library
     compile 'com.github.satyan:sugar:1.5'
+    apt 'io.requery:requery-processor:1.0.0-rc2'
+    compile 'io.requery:requery:1.0.0-rc2'
+    compile 'io.requery:requery-android:1.0.0-rc2' // for android
 
     // Event binding library
     compile 'com.jakewharton:butterknife:8.3.0'

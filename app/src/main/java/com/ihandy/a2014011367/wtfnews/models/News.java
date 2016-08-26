@@ -1,11 +1,21 @@
 package com.ihandy.a2014011367.wtfnews.models;
 
+import com.ihandy.a2014011367.wtfnews.records.NewsRecord;
+
 public class News {
     private class NewsImage {
         private String url;
     }
     private class NewsSource {
         private String name, url;
+    }
+
+    public News() {
+
+    }
+    public News(NewsRecord nr) {
+        this.title = nr.getTitle();
+        this.news_id = nr.getNewsId();
     }
 
     /* These are JSON fields */
@@ -31,5 +41,10 @@ public class News {
     }
     public long getId() {
         return news_id;
+    }
+
+    public NewsRecord toNewsRecord() {
+        NewsRecord nr = new NewsRecord(news_id, title);
+        return nr;
     }
 }

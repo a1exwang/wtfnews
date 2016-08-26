@@ -10,9 +10,6 @@ import android.util.Log;
 import com.ihandy.a2014011367.wtfnews.BR;
 import com.ihandy.a2014011367.wtfnews.R;
 
-import java.util.Collections;
-import java.util.List;
-
 import me.tatarka.bindingcollectionadapter.ItemView;
 import rx.Observable;
 import rx.Observer;
@@ -20,13 +17,13 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class CategoryViewModel {
+    private boolean loadingDone = true;
     private Category category;
     public MyOnScrollListener getScrollListener() {
         return new MyOnScrollListener();
     }
     public class MyOnScrollListener extends RecyclerView.OnScrollListener {
 
-        boolean loading = true;
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
@@ -42,41 +39,27 @@ public class CategoryViewModel {
                 int totalItemCount = mLayoutManager.getItemCount();
                 int pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition();
 
-                if (loading) {
+                if (loadingDone) {
                     if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
-                        loading = false;
                         Log.v("...", "Last Item Wow !");
                         //Do pagination.. i.e. fetch new data
-                        Observable<List<News>> observable = category.getNewsFrom(items.size(), 10);
-                        observable.subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(new Observer<List<News>>() {
-                                    @Override
-                                    public void onCompleted() {
-                                    }
-
-                                    @Override
-                                    public void onError(Throwable e) {
-                                        e.printStackTrace();
-                                    }
-
-                                    @Override
-                                    public void onNext(List<News> c) {
-                                        items.addAll(c);
-                                    }
-                                });
+                        Observable<News> observable = category.getNewsFrom(items.size(), 10);
+                        subscribe(observable);
                     }
                 }
             }
         }
     }
-    public CategoryViewModel(@NonNull Category category) {
-        Observable<List<News>> observable = category.getNewsFrom(0, 10);
-        observable.subscribeOn(Schedulers.io())
+    private void subscribe(Observable<News> observable) {
+        loadingDone = false;
+        observable
+                .onBackpressureBuffer(10000)
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<News>>() {
+                .subscribe(new Observer<News>() {
                     @Override
                     public void onCompleted() {
+                        loadingDone = true;
                     }
 
                     @Override
@@ -85,13 +68,17 @@ public class CategoryViewModel {
                     }
 
                     @Override
-                    public void onNext(List<News> c) {
-                        items.addAll(c);
+                    public void onNext(News c) {
+                        items.add(c);
                     }
                 });
-
+    }
+    public CategoryViewModel(@NonNull Category category) {
         this.category = category;
         this.name = category.getName();
+
+        Observable<News> observable = category.getNewsFrom(0, 10);
+        subscribe(observable);
     }
 
     public final ObservableList<News> items = new ObservableArrayList<>();
