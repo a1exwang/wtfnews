@@ -7,16 +7,20 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.ihandy.a2014011367.wtfnews.BR;
 import com.ihandy.a2014011367.wtfnews.NewsItemActivity;
 import com.ihandy.a2014011367.wtfnews.R;
 import com.ihandy.a2014011367.wtfnews.models.News;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import me.tatarka.bindingcollectionadapter.ItemView;
+
 public class NewsViewModel {
     public final News news;
     public NewsViewModel(News news) {
         this.news = news;
+        Log.v("NewsViewModel", String.valueOf(news.getId()));
     }
     public final View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
@@ -58,5 +62,6 @@ public class NewsViewModel {
                     }
                 });
     }
+    public final ItemView perDayItemView = ItemView.of(BR.newsPerDayViewModel, R.layout.news_per_day_item);
 
 }

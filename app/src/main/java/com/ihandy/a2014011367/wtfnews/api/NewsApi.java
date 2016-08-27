@@ -13,15 +13,17 @@ import org.json.JSONObject;
 import java.util.concurrent.ExecutionException;
 
 public class NewsApi {
-    public static JSONObject getCategories() throws ExecutionException, InterruptedException {
+    public static JSONObject getCategories() throws ExecutionException, InterruptedException, JSONException {
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
         String url = "http://assignment.crazz.cn/news/en/category?timestamp=" + System.currentTimeMillis();
         JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, future, future);
         MyVolley.getRequestQueue().add(req);
         JSONObject jsonObject = future.get();
+        JSONObject data = jsonObject.getJSONObject("data");
+        JSONObject cs = data.getJSONObject("categories");
         Log.i("NewsApi", "getCategories API");
         Log.i("NewsApi", jsonObject.toString());
-        return jsonObject;
+        return cs;
     }
 
     public static JSONArray getNews(String category) throws ExecutionException, InterruptedException, JSONException {

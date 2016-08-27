@@ -82,7 +82,7 @@ public class CategoryActivity extends AppCompatActivity {
 
         MyVolley.init(this);
 
-        mObservable = Category.getAllObservable();
+        mObservable = Category.getAll();
 
         mViewPager = (ViewPager) findViewById(R.id.viewPagerCategory);
         mPagerAdapter = new CategoryViewPagerAdapter(getSupportFragmentManager(), mObservable);
@@ -126,21 +126,4 @@ public class CategoryActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
-    public static final int MSG_UPDATE_TABS = 0x100;
-
-    class CategoryHandler extends Handler {
-        @Override
-        public void handleMessage(Message m) {
-            switch (m.what) {
-                case MSG_UPDATE_TABS:
-                    mViewPager.setAdapter(mPagerAdapter);
-                    break;
-            }
-
-        }
-
-    }
-    CategoryHandler mHandler = new CategoryHandler();
 }

@@ -1,6 +1,5 @@
 package com.ihandy.a2014011367.wtfnews;
 
-
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
@@ -10,7 +9,7 @@ public class WtfApp extends com.orm.SugarApp {
         super.onCreate();
 
         Picasso.Builder builder = new Picasso.Builder(this);
-        builder.downloader(new OkHttpDownloader(this, 50 * 1000 * 1000));
+        builder.downloader(new OkHttpDownloader(this, getResources().getInteger(R.integer.maxImageCacheSize)));
         Picasso built = builder.build();
         built.setIndicatorsEnabled(true);
         built.setLoggingEnabled(true);

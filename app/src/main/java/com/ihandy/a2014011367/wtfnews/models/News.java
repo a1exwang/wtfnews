@@ -2,8 +2,10 @@ package com.ihandy.a2014011367.wtfnews.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import com.ihandy.a2014011367.wtfnews.records.NewsRecord;
+import com.ihandy.a2014011367.wtfnews.utils.Indexable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,7 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class News implements Parcelable, Serializable {
+public class News implements Parcelable, Serializable, Comparable<News>, Indexable {
     public static News fromJSONObject(JSONObject jsonObject) throws JSONException {
         News news = new News();
 
@@ -68,7 +70,14 @@ public class News implements Parcelable, Serializable {
     private String category, country, locale_category, origin, title = "title";
     private long fetched_time, newsId, updatedTime;
     private String sourceName, url, imgUrl;
+    private volatile int indexInCategoryList;
 
+    public void setIndex(int i) {
+        this.indexInCategoryList = i;
+    }
+    public int getIndex() {
+        return this.indexInCategoryList;
+    }
     public String getTitle() { return title; }
     public void setTitle(String title) {
         this.title = title;
@@ -86,11 +95,26 @@ public class News implements Parcelable, Serializable {
     }
     public long getUpdatedTime() { return updatedTime; }
     public String getPrettyUpdatedTime() {
+        SimpleDateFormat sdf = new SimpleDateFormat("E hh:mm:ss", Locale.US);
+        return sdf.format(new Date(getUpdatedTime()));
+    }
+    public String getDay() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         return sdf.format(new Date(getUpdatedTime()));
     }
 
     public NewsRecord toNewsRecord() {
         return new NewsRecord(newsId, title, sourceName, url, imgUrl, updatedTime);
+    }
+
+    @Override
+    public int compareTo(@NonNull News news) {
+        long result = getId() - news.getId();
+        if (result > 0)
+            return -1;
+        else if (result < 0)
+            return 1;
+        else
+            return 0;
     }
 }
