@@ -40,7 +40,7 @@ public class CategoryFragment extends Fragment {
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
         if (category != null) {
-            CategoryViewModel vm = new CategoryViewModel(category);
+            CategoryViewModel vm = new CategoryViewModel(category, getContext());
             binding.setCategoryViewModel(vm);
             recyclerView.addOnScrollListener(vm.getScrollListener());
             recyclerView.setItemAnimator(new SlideInLeftAnimator());

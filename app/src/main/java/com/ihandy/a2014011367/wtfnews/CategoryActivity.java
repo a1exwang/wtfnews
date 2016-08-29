@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.ihandy.a2014011367.wtfnews.api.MyVolley;
 import com.ihandy.a2014011367.wtfnews.models.Category;
@@ -39,6 +40,7 @@ public class CategoryActivity extends AppCompatActivity {
                     .subscribe(new Observer<Category>() {
                         @Override
                         public void onCompleted() {
+                            Toast.makeText(CategoryActivity.this, "Loading done...", Toast.LENGTH_SHORT).show();
                         }
 
                         @Override

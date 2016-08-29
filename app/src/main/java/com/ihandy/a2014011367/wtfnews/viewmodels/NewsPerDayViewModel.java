@@ -2,6 +2,7 @@ package com.ihandy.a2014011367.wtfnews.viewmodels;
 
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableList;
+import android.util.Log;
 
 import com.ihandy.a2014011367.wtfnews.BR;
 import com.ihandy.a2014011367.wtfnews.R;
@@ -37,7 +38,7 @@ public class NewsPerDayViewModel {
             int index = newsList.addSortedUnique(news);
             items.add(index, new NewsViewModel(news));
         } catch (SortedUniqueArrayList.ElementAlreadyExistException e) {
-            e.printStackTrace();
+            Log.w("NewsPerDayViewModel", "News exists in the list");
         }
     }
 

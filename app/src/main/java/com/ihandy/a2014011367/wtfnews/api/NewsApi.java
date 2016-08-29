@@ -21,6 +21,8 @@ public class NewsApi {
         JSONObject jsonObject = future.get();
         JSONObject data = jsonObject.getJSONObject("data");
         JSONObject cs = data.getJSONObject("categories");
+
+        Log.i("NewsApi", "getCategories API request: " + url);
         Log.i("NewsApi", "getCategories API");
         Log.i("NewsApi", jsonObject.toString());
         return cs;
@@ -39,6 +41,8 @@ public class NewsApi {
         JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, future, future);
         MyVolley.getRequestQueue().add(req);
         JSONObject json = future.get();
+
+        Log.i("NewsApi", "getNews API request: " + url);
         Log.i("NewsApi", "getNews API");
         Log.i("NewsApi", json.toString());
         return json.getJSONObject("data").getJSONArray("news");

@@ -1,12 +1,15 @@
 package com.ihandy.a2014011367.wtfnews.viewmodels;
 
+import android.content.Context;
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableList;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.android.volley.ServerError;
 import com.ihandy.a2014011367.wtfnews.BR;
 import com.ihandy.a2014011367.wtfnews.R;
 import com.ihandy.a2014011367.wtfnews.models.Category;
@@ -47,12 +50,23 @@ public class CategoryViewModel {
                     @Override
                     public void onCompleted() {
                         loadDone();
+                        Log.i("CategoryViewModel", "loading done");
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         loadDone();
                         e.printStackTrace();
+                        if (e instanceof Category.DataNotSatisfiedException) {
+                            Toast.makeText(mContext, "没有了喵~", Toast.LENGTH_SHORT).show();
+                        }
+                        else if (e instanceof ServerError) {
+                            Toast.makeText(mContext, "Network Error", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Toast.makeText(mContext, "Unknown Error", Toast.LENGTH_SHORT).show();
+                        }
+
                     }
 
                     @Override
@@ -91,9 +105,10 @@ public class CategoryViewModel {
             }
         }
     }
-    public CategoryViewModel(@NonNull Category category) {
+    public CategoryViewModel(@NonNull Category category, Context context) {
         this.category = category;
         this.name = category.getName();
+        this.mContext = context;
         loadMore(10);
     }
 
@@ -121,11 +136,10 @@ public class CategoryViewModel {
             items.add(vm);
     }
 
-//    public final ObservableList<NewsViewModel> items = new ObservableArrayList<>();
-//    public final ItemView itemView = ItemView.of(BR.newsViewModel, R.layout.news_item);
     public final ObservableList<NewsPerDayViewModel> items = new ObservableArrayList<>();
     public final ItemView itemView = ItemView.of(BR.newsPerDayViewModel, R.layout.news_per_day_item);
 
     public final String name;
-    public String fuck;
+
+    private Context mContext;
 }

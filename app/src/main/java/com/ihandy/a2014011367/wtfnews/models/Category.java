@@ -20,6 +20,11 @@ import rx.Observable;
 import rx.Subscriber;
 
 public class Category extends BaseModel {
+    public static class DataNotSatisfiedException extends Exception {
+        public DataNotSatisfiedException(String str) {
+            super(str);
+        }
+    }
     private String name;
     private String key;
     private int priority;
@@ -127,7 +132,7 @@ public class Category extends BaseModel {
             e.printStackTrace();
         }
     }
-    private void updateNews(final long maxId, int count, Callback<News> cb) throws ExecutionException, InterruptedException, JSONException {
+    private void updateNews(final long maxId, int count, Callback<News> cb) throws ExecutionException, InterruptedException, JSONException, DataNotSatisfiedException {
         // first, search in memory
         int index = newsList.findBy(new SortedUniqueArrayList.FindCallback<News>() {
             @Override
@@ -135,13 +140,8 @@ public class Category extends BaseModel {
                 return t.getId() == maxId;
             }
         });
-        if (index == -1) {
-            // update all
-        }
-        else {
-            for (int i = index + 1; i < newsList.size(); ++i) {
-                cb.call(newsList.get(i));
-            }
+        for (int i = index + 1; i < newsList.size(); ++i) {
+            cb.call(newsList.get(i));
         }
         int rest = count - index - 1;
 
@@ -164,9 +164,11 @@ public class Category extends BaseModel {
             try {
                 News n = new News(nr);
                 newsList.addSortedUnique(n);
-                cb.call(n);
-                rest--;
-                Log.w("Category", "news added to memory cache from database, index: " + (newsList.size() - 1));
+                if (rest > 0) {
+                    cb.call(n);
+                    rest--;
+                }
+                Log.w("Category", "category: " + this.name + " news added to memory cache from database, index: " + (newsList.size() - 1));
             } catch (SortedUniqueArrayList.ElementAlreadyExistException e) {
                 // ignore duplicate elements
             }
@@ -188,15 +190,17 @@ public class Category extends BaseModel {
             news.toNewsRecord().saveIfNotFound();
             try {
                 this.newsList.addSortedUnique(news);
-                rest--;
-                cb.call(news);
-                Log.w("Category", "news added to database and memory cache, index: " + (newsList.size() - 1));
+                if (rest > 0) {
+                    rest--;
+                    cb.call(news);
+                }
+                Log.w("Category", "category: " + this.name + " news added to database and memory cache, index: " + (newsList.size() - 1));
             } catch (SortedUniqueArrayList.ElementAlreadyExistException e) {
                 // ignore duplication
             }
         }
 
         if (rest > 0)
-            throw new ArrayIndexOutOfBoundsException("cannot get enough news from API");
+            throw new DataNotSatisfiedException("cannot get enough news from API");
     }
 }
