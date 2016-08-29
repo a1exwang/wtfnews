@@ -39,12 +39,18 @@ public class Category extends BaseModel {
     }
     public void setPriority(int p) { this.priority = p;}
     public CategoryRecord toRecord() {
-        CategoryRecord cr = new CategoryRecord(key, name);
+        CategoryRecord cr = CategoryRecord.findOrCreateByKey(key, name);
         cr.setPriority(this.getPriority());
+        cr.save();
         return cr;
     }
-    public boolean visible() {
+
+    public boolean getVisible() {
         return priority >= 0;
+    }
+    public void setVisible(boolean v) {
+        priority = v ? 0 : -1;
+        toRecord().save();
     }
 
     public Observable<News> updateNews(final long maxId, final int count) {
@@ -67,13 +73,17 @@ public class Category extends BaseModel {
             }
         });
     }
+
     public static Observable<Category> getAll() {
+        return getAll(false);
+    }
+    public static Observable<Category> getAll(final boolean showAll) {
         return Observable.create(new Observable.OnSubscribe<Category>() {
             @Override
             public void call(final Subscriber<? super Category> observer) {
                 try {
                     if (!observer.isUnsubscribed()) {
-                        getAll(new Callback<Category>() {
+                        getAll(showAll, new Callback<Category>() {
                             @Override
                             public void call(Category category) {
                                 observer.onNext(category);
@@ -88,9 +98,14 @@ public class Category extends BaseModel {
         });
     }
 
-    private static void getAll(Callback<Category> cb) throws ExecutionException, InterruptedException {
+    private static void getAll(boolean showAll, Callback<Category> cb) throws ExecutionException, InterruptedException {
         // Cached categories
-        List<CategoryRecord> crs = CategoryRecord.find(CategoryRecord.class, "priority > ?", new String[]{"0"}, null, "priority desc", null);
+        List<CategoryRecord> crs;
+        if (showAll)
+            crs = CategoryRecord.find(CategoryRecord.class, null, null, null, "priority desc", null);
+        else
+            crs = CategoryRecord.find(CategoryRecord.class, "priority > ?", new String[]{"0"}, null, "priority desc", null);
+
         for (CategoryRecord cr : crs) {
             cb.call(cr.toCategory());
         }
@@ -104,7 +119,7 @@ public class Category extends BaseModel {
                 String name = cs.getString(key);
                 CategoryRecord cr = CategoryRecord.findOrCreateByKey(key, name);
                 Category c = cr.toCategory();
-                if (c.visible())
+                if (c.getVisible())
                     cb.call(c);
             }
         }
@@ -128,18 +143,18 @@ public class Category extends BaseModel {
                 cb.call(newsList.get(i));
             }
         }
-        int rest = newsList.size() - index - 1;
+        int rest = count - index - 1;
 
         // if not enough, search in database
         List<NewsRecord> newsRecords;
         if (newsList.size() == 0) {
-            newsRecords = SugarRecord.find(NewsRecord.class, "");
+            newsRecords = SugarRecord.find(NewsRecord.class, "category = ?", this.key);
         }
         else {
             News last = newsList.last();
             newsRecords = SugarRecord.find(NewsRecord.class,
-                    "news_id < ?",
-                    new String[] { String.valueOf(last.getId()) },
+                    "news_id < ? AND category = ?",
+                    new String[] { String.valueOf(last.getId()), this.key },
                     null, // groupBy
                     "news_id desc",  // orderBy
                     "24"); // limit
@@ -173,6 +188,8 @@ public class Category extends BaseModel {
             news.toNewsRecord().saveIfNotFound();
             try {
                 this.newsList.addSortedUnique(news);
+                rest--;
+                cb.call(news);
                 Log.w("Category", "news added to database and memory cache, index: " + (newsList.size() - 1));
             } catch (SortedUniqueArrayList.ElementAlreadyExistException e) {
                 // ignore duplication

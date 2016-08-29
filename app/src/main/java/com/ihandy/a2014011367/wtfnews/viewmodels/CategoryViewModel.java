@@ -127,4 +127,5 @@ public class CategoryViewModel {
     public final ItemView itemView = ItemView.of(BR.newsPerDayViewModel, R.layout.news_per_day_item);
 
     public final String name;
+    public String fuck;
 }

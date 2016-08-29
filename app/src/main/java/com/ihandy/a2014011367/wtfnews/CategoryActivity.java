@@ -1,7 +1,9 @@
 package com.ihandy.a2014011367.wtfnews;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -75,21 +77,22 @@ public class CategoryActivity extends AppCompatActivity {
     NavigationView mNavigationView;
     CategoryViewPagerAdapter mPagerAdapter;
     Observable<Category> mObservable;
+    TabLayout mTabLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
 
+        // Initialize Volley queue
         MyVolley.init(this);
 
-        mObservable = Category.getAll();
-
         mViewPager = (ViewPager) findViewById(R.id.viewPagerCategory);
+        mObservable = Category.getAll();
         mPagerAdapter = new CategoryViewPagerAdapter(getSupportFragmentManager(), mObservable);
         mViewPager.setAdapter(mPagerAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayoutCategory);
-        tabLayout.setupWithViewPager(mViewPager);
+        mTabLayout = (TabLayout) findViewById(R.id.tabLayoutCategory);
+        mTabLayout.setupWithViewPager(mViewPager);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
@@ -98,6 +101,23 @@ public class CategoryActivity extends AppCompatActivity {
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawLayout);
         mNavigationView = (NavigationView) findViewById(R.id.navigationView);
+        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Intent intent = new Intent(CategoryActivity.this, SettingsActivity.class);
+                startActivity(intent);
+                return false;
+            }
+        });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override

@@ -31,6 +31,7 @@ public class News implements Parcelable, Serializable, Comparable<News>, Indexab
         news.url = source.getString("url");
         news.sourceName = source.getString("name");
         news.updatedTime = jsonObject.getLong("updated_time");
+        news.category = jsonObject.getString("category");
 
         return news;
     }
@@ -64,6 +65,7 @@ public class News implements Parcelable, Serializable, Comparable<News>, Indexab
         this.sourceName = nr.getSourceName();
         this.url = nr.getUrl();
         this.updatedTime = nr.getUpdatedTime();
+        this.category = nr.getCategory();
     }
 
     /* These are JSON fields */
@@ -104,7 +106,7 @@ public class News implements Parcelable, Serializable, Comparable<News>, Indexab
     }
 
     public NewsRecord toNewsRecord() {
-        return new NewsRecord(newsId, title, sourceName, url, imgUrl, updatedTime);
+        return new NewsRecord(newsId, title, sourceName, url, imgUrl, updatedTime, category);
     }
 
     @Override

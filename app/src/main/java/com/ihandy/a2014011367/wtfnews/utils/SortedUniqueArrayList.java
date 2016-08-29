@@ -10,12 +10,13 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class SortedUniqueArrayList<T extends Comparable<T> & Indexable> implements List<T> {
+    private ArrayList<T> data = new ArrayList<>();
+
     public static class ElementAlreadyExistException extends Exception {
     }
     public interface FindCallback<T1> {
         boolean isTarget(T1 t);
     }
-    private ArrayList<T> data = new ArrayList<>();
 
     public int findBy(FindCallback<T> cb) {
         for (int i = 0; i < data.size(); ++i) {

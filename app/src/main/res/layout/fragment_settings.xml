@@ -1,13 +1,47 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.ihandy.a2014011367.wtfnews.SettingsActivityFragment"
-    tools:showIn="@layout/activity_settings">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+        <import type="me.tatarka.bindingcollectionadapter.LayoutManagers" />
+        <variable name="settingsViewModel" type="com.ihandy.a2014011367.wtfnews.viewmodels.SettingsViewModel" />
+    </data>
 
-</RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context="com.ihandy.a2014011367.wtfnews.SettingsActivityFragment"
+        tools:showIn="@layout/activity_settings">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textViewCategoryName"
+                    android:text="Categories"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/textViewCategoryName"
+                    android:layout_toRightOf="@id/textViewCategoryName"
+                    android:scrollbars="vertical"
+                    android:fadeScrollbars="true"
+                    app:layoutManager="@{LayoutManagers.linear()}"
+                    app:items="@{settingsViewModel.categories}"
+                    app:itemView="@{settingsViewModel.categoryItemView}" />
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+    </RelativeLayout>
+</layout>

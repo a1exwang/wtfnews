@@ -9,18 +9,21 @@ public class NewsRecord extends SugarRecord {
     private String title;
     private String url, sourceName;
     private String imgUrl;
+    private String category;
     private long updatedTime;
 
     public NewsRecord() {
     }
-    public NewsRecord(long newsId, String title, String sourceName, String url, String imgUrl, long updatedTime) {
+    public NewsRecord(long newsId, String title, String sourceName, String url, String imgUrl, long updatedTime, String category) {
         this.newsId = newsId;
         this.title = title;
         this.sourceName = sourceName;
         this.url = url;
         this.imgUrl = imgUrl;
         this.updatedTime = updatedTime;
+        this.category = category;
     }
+
 
     public long getNewsId() {
         return newsId;
@@ -46,4 +49,5 @@ public class NewsRecord extends SugarRecord {
         return this.url;
     }
     public long getUpdatedTime() { return this.updatedTime; }
+    public String getCategory() { return this.category; }
 }

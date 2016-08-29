@@ -1,5 +1,6 @@
 package com.ihandy.a2014011367.wtfnews;
 
+import com.ihandy.a2014011367.wtfnews.api.MyVolley;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
