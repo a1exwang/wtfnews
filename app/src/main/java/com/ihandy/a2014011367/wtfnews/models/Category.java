@@ -12,6 +12,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -107,9 +110,9 @@ public class Category extends BaseModel {
         // Cached categories
         List<CategoryRecord> crs;
         if (showAll)
-            crs = CategoryRecord.find(CategoryRecord.class, null, null, null, "priority desc", null);
+            crs = CategoryRecord.findWithQuery(CategoryRecord.class, "select * from CATEGORY_RECORD order by priority desc");
         else
-            crs = CategoryRecord.find(CategoryRecord.class, "priority > ?", new String[]{"0"}, null, "priority desc", null);
+            crs = CategoryRecord.findWithQuery(CategoryRecord.class, "select * from CATEGORY_RECORD where priority >= 0 order by priority desc");
 
         for (CategoryRecord cr : crs) {
             cb.call(cr.toCategory());
@@ -122,17 +125,21 @@ public class Category extends BaseModel {
             while (itKey.hasNext()) {
                 String key = itKey.next();
                 String name = cs.getString(key);
-                CategoryRecord cr = CategoryRecord.findOrCreateByKey(key, name);
-                Category c = cr.toCategory();
-                if (c.getVisible())
-                    cb.call(c);
+
+                boolean[] created = new boolean[1];
+                CategoryRecord cr = CategoryRecord.findOrCreateByKey(key, name, created);
+                if (created[0]) {
+                    Category c = cr.toCategory();
+                    if (c.getVisible())
+                        cb.call(c);
+                }
             }
         }
         catch (JSONException e) {
             e.printStackTrace();
         }
     }
-    private void updateNews(final long maxId, int count, Callback<News> cb) throws ExecutionException, InterruptedException, JSONException, DataNotSatisfiedException {
+    private void updateNews(final long maxId, int count, Callback<News> cb) throws ExecutionException, InterruptedException, JSONException, DataNotSatisfiedException, UnsupportedEncodingException {
         // first, search in memory
         int index = newsList.findBy(new SortedUniqueArrayList.FindCallback<News>() {
             @Override
@@ -184,7 +191,15 @@ public class Category extends BaseModel {
 
         for (int i = 0; i < jsonNews.length(); ++i) {
             JSONObject jsonNewsObject = (JSONObject) jsonNews.get(i);
-            News news = News.fromJSONObject(jsonNewsObject);
+            News news;
+            try {
+                news = News.fromJSONObject(jsonNewsObject, this.name);
+            }
+            catch (JSONException e) {
+                // ignore bad json objects
+                e.printStackTrace();
+                continue;
+            }
 
             // add to database and memory cache if new news does not exists
             news.toNewsRecord().saveIfNotFound();

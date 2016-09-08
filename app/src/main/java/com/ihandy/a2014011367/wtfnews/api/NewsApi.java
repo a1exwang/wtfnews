@@ -10,6 +10,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.concurrent.ExecutionException;
 
 public class NewsApi {
@@ -28,16 +30,17 @@ public class NewsApi {
         return cs;
     }
 
-    public static JSONArray getNews(String category) throws ExecutionException, InterruptedException, JSONException {
+    public static JSONArray getNews(String category) throws ExecutionException, InterruptedException, JSONException, UnsupportedEncodingException {
         return getNews(category, -1);
     }
-    public static JSONArray getNews(String category, long maxId) throws ExecutionException, InterruptedException, JSONException {
+    public static JSONArray getNews(String category, long maxId) throws ExecutionException, InterruptedException, JSONException, UnsupportedEncodingException {
         String newsIdParam = "";
         if (maxId != -1) {
             newsIdParam = "&max_news_id=" + maxId;
         }
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        String url = "http://assignment.crazz.cn/news/query?locale=en&category=" + category + newsIdParam;
+        String categoryParameter = URLEncoder.encode(category, "UTF-8");
+        String url = "http://assignment.crazz.cn/news/query?locale=en&category=" + categoryParameter + newsIdParam;
         JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, future, future);
         MyVolley.getRequestQueue().add(req);
         JSONObject json = future.get();

@@ -45,16 +45,21 @@ public class CategoryRecord extends SugarRecord {
     }
 
     static public CategoryRecord findOrCreateByKey(String key, String name) {
+        return findOrCreateByKey(key, name, new boolean[1]);
+    }
+    static public CategoryRecord findOrCreateByKey(String key, String name, boolean[] created) {
         List<CategoryRecord> result = CategoryRecord.find(CategoryRecord.class, "key = ?", key);
         if (result.size() == 0) {
             CategoryRecord record = new CategoryRecord(key, name);
             record.save();
+            created[0] = true;
             return record;
         }
         else {
             CategoryRecord cr = result.get(0);
             cr.setName(name);
             cr.save();
+            created[0] = false;
             return cr;
         }
     }

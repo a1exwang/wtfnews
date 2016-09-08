@@ -17,21 +17,30 @@ import java.util.Date;
 import java.util.Locale;
 
 public class News implements Parcelable, Serializable, Comparable<News>, Indexable {
-    public static News fromJSONObject(JSONObject jsonObject) throws JSONException {
+    public static News fromJSONObject(JSONObject jsonObject, String category) throws JSONException {
         News news = new News();
 
         news.title = jsonObject.getString("title");
         news.newsId = jsonObject.getLong("news_id");
-        JSONArray jsonArray =jsonObject.getJSONArray("imgs");
-        if (jsonArray.length() > 0) {
-            JSONObject jo = (JSONObject) jsonArray.get(0);
-            news.imgUrl = jo.getString("url");
+        news.imgUrl = null;
+        if (jsonObject.has("imgs")) {
+            JSONArray jsonArray =jsonObject.getJSONArray("imgs");
+            if (jsonArray.length() > 0) {
+                JSONObject jo = (JSONObject) jsonArray.get(0);
+                news.imgUrl = jo.getString("url");
+            }
         }
-        JSONObject source = jsonObject.getJSONObject("source");
-        news.url = source.getString("url");
-        news.sourceName = source.getString("name");
-        news.updatedTime = jsonObject.getLong("updated_time");
-        news.category = jsonObject.getString("category");
+        if (jsonObject.isNull("source")) {
+            news.url = null;
+            news.sourceName = "Unknown";
+        }
+        else {
+            JSONObject source = jsonObject.getJSONObject("source");
+            news.url = source.getString("url");
+            news.sourceName = source.getString("name");
+        }
+        news.updatedTime = jsonObject.getLong("fetched_time");
+        news.category = category;
 
         return news;
     }
@@ -73,6 +82,7 @@ public class News implements Parcelable, Serializable, Comparable<News>, Indexab
     private long fetched_time, newsId, updatedTime;
     private String sourceName, url, imgUrl;
     private volatile int indexInCategoryList;
+    private boolean saved = false;
 
     public void setIndex(int i) {
         this.indexInCategoryList = i;
@@ -86,6 +96,9 @@ public class News implements Parcelable, Serializable, Comparable<News>, Indexab
     }
     public String getCategory() { return category; }
     public String getUrl() { return url; }
+    public boolean isUrlAvailable() {
+        return url != null && url.length() > 0;
+    }
     public String getImageUrl() {
         return imgUrl;
     }
@@ -94,6 +107,13 @@ public class News implements Parcelable, Serializable, Comparable<News>, Indexab
     }
     public long getId() {
         return newsId;
+    }
+    public boolean getSaved() {
+        return saved;
+    }
+    public void toggleSaved() {
+        this.saved = !this.saved;
+        this.toNewsRecord().save();
     }
     public long getUpdatedTime() { return updatedTime; }
     public String getPrettyUpdatedTime() {
@@ -106,7 +126,7 @@ public class News implements Parcelable, Serializable, Comparable<News>, Indexab
     }
 
     public NewsRecord toNewsRecord() {
-        return new NewsRecord(newsId, title, sourceName, url, imgUrl, updatedTime, category);
+        return new NewsRecord(newsId, title, sourceName, url, imgUrl, updatedTime, category, saved);
     }
 
     @Override

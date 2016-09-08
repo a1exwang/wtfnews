@@ -60,7 +60,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_toRightOf="@+id/relativeLayoutLeftViews"
                 android:layout_toEndOf="@+id/relativeLayoutLeftViews"
-                android:contentDescription="news thumb"
+                android:contentDescription="@string/news_thumb"
                 app:imageUrl="@{newsViewModel.news.imageUrl}"/>
         </RelativeLayout>
     </LinearLayout>

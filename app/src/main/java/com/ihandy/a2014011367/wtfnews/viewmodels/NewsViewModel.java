@@ -33,34 +33,43 @@ public class NewsViewModel {
     @BindingAdapter("app:imageUrl")
     public static void setImageUrl(final ImageView imageView, final String url) {
         Picasso.with(imageView.getContext()).setIndicatorsEnabled(true);
-        Picasso.with(imageView.getContext())
-                .load(url)
-                .fit()
-                .centerCrop()
-                .into(imageView, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                    }
+        if (url == null || url.length() == 0) {
+            Picasso.with(imageView.getContext())
+                    .load(R.drawable.placeholder)
+                    .fit()
+                    .centerCrop()
+                    .into(imageView);
+        }
+        else {
+            Picasso.with(imageView.getContext())
+                    .load(url)
+                    .fit()
+                    .centerCrop()
+                    .into(imageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                        }
 
-                    @Override
-                    public void onError() {
-                        //Try again online if cache failed
-                        Picasso.with(imageView.getContext())
-                                .load(url)
-                                .fit()
-                                .centerCrop()
-                                .into(imageView, new Callback() {
-                                    @Override
-                                    public void onSuccess() {
-                                    }
+                        @Override
+                        public void onError() {
+                            //Try again online if cache failed
+                            Picasso.with(imageView.getContext())
+                                    .load(url)
+                                    .fit()
+                                    .centerCrop()
+                                    .into(imageView, new Callback() {
+                                        @Override
+                                        public void onSuccess() {
+                                        }
 
-                                    @Override
-                                    public void onError() {
-                                        Log.v("Picasso", "Could not fetch image");
-                                    }
-                                });
-                    }
-                });
+                                        @Override
+                                        public void onError() {
+                                            Log.v("Picasso", "Could not fetch image");
+                                        }
+                                    });
+                        }
+                    });
+        }
     }
     public final ItemView perDayItemView = ItemView.of(BR.newsPerDayViewModel, R.layout.news_per_day_item);
 

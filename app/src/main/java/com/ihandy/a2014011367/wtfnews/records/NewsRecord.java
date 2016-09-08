@@ -11,10 +11,11 @@ public class NewsRecord extends SugarRecord {
     private String imgUrl;
     private String category;
     private long updatedTime;
+    private boolean saved;
 
     public NewsRecord() {
     }
-    public NewsRecord(long newsId, String title, String sourceName, String url, String imgUrl, long updatedTime, String category) {
+    public NewsRecord(long newsId, String title, String sourceName, String url, String imgUrl, long updatedTime, String category, boolean saved) {
         this.newsId = newsId;
         this.title = title;
         this.sourceName = sourceName;
@@ -22,6 +23,7 @@ public class NewsRecord extends SugarRecord {
         this.imgUrl = imgUrl;
         this.updatedTime = updatedTime;
         this.category = category;
+        this.saved = saved;
     }
 
 
@@ -50,4 +52,6 @@ public class NewsRecord extends SugarRecord {
     }
     public long getUpdatedTime() { return this.updatedTime; }
     public String getCategory() { return this.category; }
+    public boolean getSaved() { return this.saved; }
+    public void setSaved(boolean saved) { this.saved = saved; }
 }
